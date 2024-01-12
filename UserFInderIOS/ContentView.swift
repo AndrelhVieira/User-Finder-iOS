@@ -8,67 +8,63 @@
 import SwiftUI
 import CoreData
 
+extension Color {
+    init(_ hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (r, g, b) = ((int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (r, g, b) = (int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (r, g, b) = (1, 1, 0)
+        }
+        self.init(
+            .sRGB,
+            red: Double(r) / 255.0,
+            green: Double(g) / 255.0,
+            blue:  Double(b) / 255.0,
+            opacity: 1
+        )
+    }
+}
+
+
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
     var body: some View {
         NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
+        ZStack {
+            Color("#094074").edgesIgnoringSafeArea(.all)
+
+            VStack {
+                Image("cover")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 250, height: 250)
+                Image("complete_logo_user_finder")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 200, height: 100)
+                Text("Welcome to User Finder")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+                Text("Here you will find the main information about any github account")
+                    .font(.callout)
+                    .padding()
+                    .foregroundColor(.white)
+                NavigationLink(destination: SearchView()) {
+                    Text("SEARCH AN ACCOUNT")
+                        .font(.title3)
+                        .padding()
+                        .background(Color("#3c6997"))
+                        .foregroundColor(.white)
+                        .bold()
                 }
-                .onDelete(perform: deleteItems)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }

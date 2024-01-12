@@ -5,32 +5,29 @@
 //  Created by André Luiz Hiller Vieira on 04/01/24.
 //
 
+import SwiftUI
+import Combine
 import Foundation
 
-struct UserSearch: Codable {
-    let fullName: String
-    let username: String
-}
+class MyStorageManager: ObservableObject {
+    @Published var objectList: [UserSearched] = []
 
-class MyStorageManager {
-    static let shared = MyStorageManager()
-    private let userDefaults = UserDefaults.standard
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
-    private let storageKey = "UserSearchList"
-
-    func saveObjectList(_ list: [UserSearch]) {
-        if let encodedData = try? encoder.encode(list) {
-            userDefaults.set(encodedData, forKey: storageKey)
-        }
+    init() {
+        self.objectList = getObjectList()
     }
 
-    func getObjectList() -> [UserSearch] {
-        if let savedData = userDefaults.object(forKey: storageKey) as? Data {
-            if let decodedList = try? decoder.decode([UserSearch].self, from: savedData) {
-                return decodedList
-            }
+    func getObjectList() -> [UserSearched] {
+        if let data = UserDefaults.standard.data(forKey: "UserSearchedList"),
+           let decoded = try? JSONDecoder().decode([UserSearched].self, from: data) {
+            return decoded
         }
         return []
+    }
+
+    func saveObjectList(_ newList: [UserSearched]) {
+        if let encoded = try? JSONEncoder().encode(newList) {
+            UserDefaults.standard.set(encoded, forKey: "UserSearchedList")
+            self.objectList = newList
+        }
     }
 }
