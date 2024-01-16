@@ -42,6 +42,17 @@ width="200"
 />
 </p>
 
+## More screens and functionalities
+<p width="100%">
+<img src="assets/printAboutPage.png" alt="About page print for demonstration" width="200" />
+<img src="assets/printHistoryPage.png" alt="History page print for demonstration" width="200" />
+<img src="assets/printHistoryPageConfirmationModal.png" alt="History page confirmation modal for delete print for demonstration" width="200" />
+<img src="assets/printInitialPage.png" alt="Initial page print for demonstration" width="200" />
+<img src="assets/printSearchPage.png" alt="Search page print for demonstration" width="200" />
+<img src="assets/printSearchPageRepos.png" alt="Search page repositories results print for demonstration" width="200" />
+<img src="assets/printSearchPageResult.png" alt="Search page results print for demonstration" width="200" />
+</p>
+
 # Tecnologies
 These were the main technologies, frameworks and libraries used in the development of this project:
 
